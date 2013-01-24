@@ -1,0 +1,14 @@
+This class lets you build simple controllers, fuzzy-logic derived from the fields of artificial intelligence. Fuzzy-logic controllers are useful wherever the use of classical logic (YES NO) is unreliable.
+
+WHAT IS FUZZY LOGIC?
+In this context, FL is a problem-solving control system methodology that lends itself to implementation in systems ranging from simple, small, embedded micro-controllers to large, networked, multi-channel PC or workstation-based data acquisition and control systems. It can be implemented in hardware, software, or a combination of both. FL provides a simple way to arrive at a definite conclusion based upon vague, ambiguous, imprecise, noisy, or missing input information. FL's approach to control problems mimics how a person would make decisions, only much faster.
+
+HOW IS FL DIFFERENT FROM CONVENTIONAL CONTROL METHODS?
+FL incorporates a simple, rule-based IF X AND Y THEN Z approach to a solving control problem rather than attempting to model a system mathematically. The FL model is empirically-based, relying on an operator's experience rather than their technical understanding of the system. For example, rather than dealing with temperature control in terms such as "SP =500F", "T <1000F", or "210C <TEMP <220C", terms like "IF (process is too cool) AND (process is getting colder) THEN (add heat to the process)" or "IF (process is too hot) AND (process is heating rapidly) THEN (cool the process quickly)" are used. These terms are imprecise and yet very descriptive of what must actually happen. Consider what you do in the shower if the temperature is too cold: you will make the water comfortable very quickly with little trouble. FL is capable of mimicking this type of behavior but at very high rate.
+
+Fuzzy logic has proved very useful in engineering applications, which is where the classical logic of classifying only criterion for true / false can not effectively cope with the many ambiguities and contradictions. Many applications, including electronic control systems (machines, vehicles and machines), Data Mining, or in the construction of expert systems. 
+ Methods of fuzzy logic along with evolutionary algorithms and neural networks are the modern tools for building intelligent systems with the ability of generalization of knowledge.
+
+ sources:
+ http://www.seattlerobotics.org/encoder/mar98/fuz/fl_part1.html#WHAT IS FUZZY LOGIC?
+ Wikipedia
