@@ -430,52 +430,52 @@ class Rules extends Fuzzify{
 * example :
 *    $val = $fuzzy->processRule('IF input1.High AND input2.Slow Then Out1.Run');
 * @param   string Rule
-* return   float (calculated fuzzy value as Rule cryteria)
+* return   array(float, output) (calculated fuzzy value as Rule cryteria)
 **/	
 	
-	public function processRule($rule) {
-		while ($in_parent = $this->getLastParent($rule)) {	
-			$pos=strpos($rule,$in_parent);
-			$len=strlen($in_parent);
-			$tmparr=array();
-			$items=preg_split("/\s+/",$in_parent);
-			$operation='and';
-			foreach($items as $item) {
-				$inp=strtolower($item);
-				if (($inp=='or') or ($inp=='and') or ($inp=='not')) $operation=$inp; 	else   {
-					list($inputName,$memberName) = preg_split("/\./",$item);
-					// get value from 
-					$mem_idx = $this->getMembersIndex($inputName,$memberName);
-					$tmparr[] =$this->FOutputs[$inputName][$mem_idx];
-					}
-			}
-		$value1 = ($operation == 'or') ? $this->_FuzzyOR($tmparr) : 
-				  ($operation == 'not') ? $this->_FuzzyNOT($tmparr) :$this->_FuzzyAND($tmparr);
-		$rule=substr($rule,0,$pos-1).$value1.substr($rule,$pos+$len+1); 
-		}
-		
-		$items=preg_split("/\s+/",$rule);
-		$operation='and';
-		$firstop = array_shift($items);
-		$outitem = array_pop($items);
-		$tmparr=array();
-		foreach($items as $item) {
-			$inp=strtolower($item);
-			if (($inp=='or') or ($inp=='and') or ($inp=='not')) $operation=$inp; 
-				elseif (($inp=='then') or ($inp=='for'))  continue;
-					else {
-						// split names
-						list($inputName,$memberName) = preg_split("/\./",$item);
-						// get value from FOutputs 
-						$mem_idx = $this->getMembersIndex($inputName,$memberName);
-						$tmparr[] =$this->FOutputs[$inputName][$mem_idx];
-						}
-		}
-		$value1 = ($operation == 'or') ? $this->_FuzzyOR($tmparr) : 
-				  ($operation == 'not') ? $this->_FuzzyNOT($tmparr) :$this->_FuzzyAND($tmparr);
-				  
-		return array($outitem,$value1);
-	}
+  public function processRule($rule) {
+        // strip IF
+        $ifLess = explode('IF', $rule)[1];
+        //get value and outputSTring
+        list($value, $outputString) = explode('THEN', $ifLess);
+        $toReturn = (array(trim($outputString), $this->evalRule($value)));
+        return $toReturn;
+    }
+
+    private function evalRule ($fuLo) {
+        // if nil return nothing
+        if (!isset( $fuLo)) return '';
+        $fuLo = trim($fuLo); //get rid of whitespace
+        if ($fuLo === '') return '';
+        //replace first found inner parentheses with evalRule content of parentheses
+        if (strpos('$fuLo', '(') !== FALSE) {
+            list($leftOfParentheses, $rightOfOpeningParenthesis) = explode('(', $fulo);
+            list($middle, $rightOfParentheses) = explode(')', $fulo);
+            return $this->evalRule($leftOfParentheses . ' ' . $this->evalRule($middle) . ' ' . ($rightOfParentheses));
+        }
+        //else find op and return evalRule(lf) op evalRule(rs) for binary
+        //or evalRule( beforeop . (op afterop) )
+        //TODO there must be a nicer way to do this, 
+        list($leftOfOperator, $rightOfOperator) = explode('AND', $fuLo);
+        if ($leftOfOperator !== NULL && $rightOfOperator !== NULL) {
+            return $this->_FuzzyAND(array($this->evalRule($leftOfOperator), $this->evalRule($rightOfOperator)));
+        }
+        list($leftOfOperator, $rightOfOperator) = explode('OR', $fuLo);
+        if ($leftOfOperator !== NULL && $rightOfOperator !== NULL) {
+            return $this->_FuzzyOR(array($this->evalRule($leftOfOperator), $this->evalRule($rightOfOperator)));
+        }
+        list($leftOfOperator, $rightOfOperator) = explode('NOT',$fuLo);
+        if ($rightOfOperator !== NULL) {
+        return $this->evalRule($leftoOfOperator . ' ' . $this->_FuzzyNOT($this->evalRule($rightOfOperator)));
+        }
+        //ATOM
+        //get value from FOutputs
+        list($inputName, $memberName) = preg_split("/\./", $fuLo);
+        $memIndex = $this->getMembersIndex($inputName, $memberName);
+        $toReturn = $this->FOutputs[$inputName][$memIndex];
+        return $toReturn;
+    }
+
 	
 } //class Rules	
 
