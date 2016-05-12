@@ -906,7 +906,7 @@ class PAM_Fuzzy_Logic
 		$this->PAMFuzzy->setInputRange($output_name, array(0, 5));
 	}
 
-	private add_rules()
+	private function add_rules()
 	{
 		// iJab 2013/01/22: Add fuzzy logic Rules
 		$this->PAMFuzzy_rules = array("1 0 0 0 1 0 0, 1 (1) : 1", 
